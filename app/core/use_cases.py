@@ -28,3 +28,14 @@ def predict_survival_rate(do, ph, temperature, turbidity):
         anomaly_detected = True
     
     return survival_rate, anomaly_detected
+
+def get_water_quality_data():
+    """
+    Retrieve water quality data from the database.
+
+    :return: List of dictionaries containing water quality data
+    """
+    # Call the repository function to fetch the data
+    data = fetch_all_water_quality_data()
+    
+    return data
