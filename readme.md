@@ -103,7 +103,7 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 }
 ```
 
-**Predict Survival Rate**:
+**Get Water Quality Data:**:
 - Endpoint: /water-quality
 - Method: GET
 - Description: Retrieve water quality data from the database.
