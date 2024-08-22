@@ -56,7 +56,7 @@ To start the Flask application, use the following commands:
 2. **Run the Application:**:
 
 ```
-    python app.py
+    python run.py
 ```
 
 The Flask application will start and be available at http://localhost:5000.
