@@ -1,4 +1,4 @@
-# Water Quality ML API
+# Water Quality and Survival Rate Predict ML API
 
 ## Description
 
