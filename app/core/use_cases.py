@@ -1,5 +1,6 @@
 import pickle
 import numpy as np
+from app.repositories.water_quality_repo import fetch_all_water_quality_data
 
 # Load the trained model (assuming the model is saved in a file named 'survival_model.pkl')
 with open('app/data/survival_model.pkl', 'rb') as f:

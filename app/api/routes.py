@@ -1,8 +1,13 @@
 from flask import Blueprint, request, jsonify
 from app.core.use_cases import predict_survival_rate
+from app.core.use_cases import get_water_quality_data
 
 # Create a blueprint for the API routes
 api_bp = Blueprint('api', __name__)
+
+@api_bp.route('/', methods=['GET'])
+def index():
+    return jsonify({'message': 'Welcome to the Shrimp Survival API!'})
 
 # Define a route for the predict endpoint
 @api_bp.route('/predict', methods=['POST'])
@@ -30,6 +35,7 @@ def predict():
     })
 
 # Define a route for the water quality endpoint
+@api_bp.route('/water-quality', methods=['GET'])
 def water_quality():
     # Retrieve water quality data using the use case
     data = get_water_quality_data()
