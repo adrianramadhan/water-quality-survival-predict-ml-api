@@ -2,7 +2,7 @@
 
 ## Description
 
-The `water-quality-and-Survival-Rate-Predict-ml-api` project is designed to predict the survival rate of shrimp in a pond based on four key water quality variables:
+The `water-quality-and-survival-rate-predict-ml-api` project is designed to predict the survival rate of shrimp in a pond based on four key water quality variables:
 
 - **DO (Dissolved Oxygen)**
 - **pH**
