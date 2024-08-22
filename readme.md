@@ -38,7 +38,7 @@ Before running the application, you'll need to train the Random Forest model on 
 2. **Train the Model**:
    - Run the script to train the model:
    ```bash
-   python app/models/train_model.py
+   train_model.py
    ```
 
 This will generate a trained Random Forest model stored in the models directory.
