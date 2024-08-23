@@ -5,6 +5,10 @@ from app.repositories.water_quality_repo import fetch_all_water_quality_data
 # Load the trained model (assuming the model is saved in a file named 'survival_model.pkl')
 with open('app/data/survival_model.pkl', 'rb') as f:
     model = pickle.load(f)
+print(model)
+
+# model = load('app/data/survival_model.pkl')
+# print(type(model)) 
 
 def predict_survival_rate(do, ph, temperature, turbidity):
     """
@@ -28,6 +32,7 @@ def predict_survival_rate(do, ph, temperature, turbidity):
     if do < 5.0 or ph < 6.0 or temperature < 20.0 or turbidity > 20.0:
         anomaly_detected = True
     
+    print(model)
     return survival_rate, anomaly_detected
 
 def get_water_quality_data():

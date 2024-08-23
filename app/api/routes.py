@@ -3,7 +3,7 @@ from app.core.use_cases import predict_survival_rate
 from app.core.use_cases import get_water_quality_data
 
 # Create a blueprint for the API routes
-api_bp = Blueprint('api', __name__)
+api_bp = Blueprint('/', __name__)
 
 @api_bp.route('/', methods=['GET'])
 def index():
