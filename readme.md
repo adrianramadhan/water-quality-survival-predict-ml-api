@@ -74,12 +74,9 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 ```
     {
        "pH": 7.2,
-       "Conductivity": 1200,
        "Turbidity": 3.5,
-       "TSS": 15,
-       "COD": 220,
-       "TotalColiform": 50,
-       "Color": 100
+       "do": 6.5,
+       "temperature": 28.5,
     }
 ```
 
@@ -87,7 +84,7 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 
 ```
 {
-    "predicted_BOD": 180,
+    "survival_rate": 180,
     "anomaly_detected": false
 }
 ```
