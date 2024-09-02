@@ -67,17 +67,16 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 
 **Predict Survival Rate**:
 
-- Endpoint: /predict
+- Endpoint: api/predict
 - Method: POST
-- Description: Predict the shrimp survival rate based on input water quality variables.
 - Request Body
 
 ```
     {
-        "do": 6.5,
-        "ph": 7.2,
-        "temperature": 28.5,
-        "turbidity": 10.0
+       "pH": 7.2,
+       "Turbidity": 3.5,
+       "do": 6.5,
+       "temperature": 28.5,
     }
 ```
 
@@ -85,16 +84,15 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 
 ```
 {
-    "survival_rate": 85.0,
+    "survival_rate": 180,
     "anomaly_detected": false
 }
 ```
 
 **Get Water Quality Data:**:
 
-- Endpoint: /water-quality
+- Endpoint: api/dataset
 - Method: GET
-- Description: Retrieve water quality data from the database.
 - Response
 
 ```
