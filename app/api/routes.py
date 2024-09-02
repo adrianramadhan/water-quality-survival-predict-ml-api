@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.core.use_cases import predict_survival_rate
 from app.core.use_cases import get_water_quality_data
+from app.core.use_cases import generate_recommendations
 
 # Create a blueprint for the API routes
 api_bp = Blueprint('/', __name__)
@@ -42,3 +43,23 @@ def water_quality():
 
     # Return the data as a JSON response
     return jsonify(data)
+
+@api_bp.route('/recommendation', methods=['POST'])
+def get_recommendation():
+    data = request.json
+    do = data['do']
+    ph = data['ph']
+    temperature = data['temperature']
+    turbidity = data['turbidity']
+    
+    # Call the model to predict survival rate (assuming the function exists)
+    survival_rate, anomaly_detected = predict_survival_rate(do, ph, temperature, turbidity)
+    
+    # Generate recommendations
+    recommendations = generate_recommendations(do, ph, temperature, turbidity, anomaly_detected)
+    
+    return jsonify({
+        "survival_rate": survival_rate,
+        "anomaly_detected": anomaly_detected,
+        "recommendation": recommendations
+    })

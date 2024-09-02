@@ -45,3 +45,18 @@ def get_water_quality_data():
     data = fetch_all_water_quality_data()
     
     return data
+
+def generate_recommendations(do, ph, temperature, turbidity, anomaly_detected):
+    recommendations = []
+    if anomaly_detected:
+        if do < 4.0:
+            recommendations.append("Increase Dissolved Oxygen by adding aeration.")
+        if ph < 7.5 or ph > 8.5:
+            recommendations.append("Adjust the pH by adding alkaline substances.")
+        if turbidity > 20.0:
+            recommendations.append("Check the water source for possible contamination.")
+        # Add more conditions as needed
+    else:
+        recommendations = ["Water quality is within optimal parameters. No immediate action required."]
+    
+    return recommendations
