@@ -84,7 +84,7 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 
 ```
 {
-    "survival_rate": 180,
+    "survival_rate": 90,
     "anomaly_detected": false
 }
 ```
