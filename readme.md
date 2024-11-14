@@ -24,7 +24,7 @@ Ensure you have the following installed:
 - MySQL database
 - Pandas
 - Scikit-learn
-- Joblib
+- Pickle
 - Flask
 
 ### Train the Model
@@ -84,14 +84,14 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 
 ```
 {
-    "survival_rate": 180,
+    "survival_rate": 90,
     "anomaly_detected": false
 }
 ```
 
 **Get Water Quality Data:**:
 
-- Endpoint: api/dataset
+- Endpoint: api/data
 - Method: GET
 - Response
 
@@ -105,4 +105,32 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
         "survival_rate": 85.0
     },
 ]
+```
+
+**Anomaly Recommendation:**:
+
+- Endpoint: api/recommendation
+- Method: POST
+- Request Body
+```
+   {
+    "do": 3.5,
+    "ph": 6.2,
+    "temperature": 26.5,
+    "turbidity": 22.0
+   }
+```
+
+- Response
+
+```
+{
+    "anomaly_detected": true,
+    "recommendation": [
+        "Increase Dissolved Oxygen by adding aeration.",
+        "Adjust the pH by adding alkaline substances.",
+        "Check the water source for possible contamination."
+    ],
+    "survival_rate": 75.0
+}
 ```
