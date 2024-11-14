@@ -1,32 +1,29 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-import joblib
 import pickle
 
-# Load the data
-data = pd.read_csv('app/data/dataset.csv')
+# Load the modified dataset with Survival Rate
+data = pd.read_excel('app/data/dataset_filled.xlsx')
 
-# check missing values
-print("Checking missing value")
+# Check for missing values
+print("Checking missing values")
 print(data.isnull().sum())
 
-# handle missing values
+# Drop any remaining rows with missing values
 data = data.dropna()
 
-# Split the data into X and y
-# Separating input features (X) and target variable (y)
-X = data.drop('Survival Rate', axis=1)
+# Separate input features (X) and target variable (y)
+X = data[['TDS', 'pH']]  # Gunakan kolom input yang diperlukan
 y = data['Survival Rate']
 
-# train the model
+# Train the model
 model = RandomForestClassifier()
 model.fit(X, y)
 
+# Confirm model type
 print(type(model))
 
-
-# save the model
-# joblib.dump(model, 'app/data/survival_model.pkl')
+# Save the trained model
 with open('app/data/survival_model.pkl', 'wb') as f:
     pickle.dump(model, f)
 print("Model has been trained and saved as survival_model.pkl")

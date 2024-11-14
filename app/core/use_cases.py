@@ -5,34 +5,27 @@ from app.repositories.water_quality_repo import fetch_all_water_quality_data
 # Load the trained model (assuming the model is saved in a file named 'survival_model.pkl')
 with open('app/data/survival_model.pkl', 'rb') as f:
     model = pickle.load(f)
-print(model)
 
-# model = load('app/data/survival_model.pkl')
-# print(type(model)) 
-
-def predict_survival_rate(do, ph, temperature, turbidity):
+def predict_survival_rate(tds, ph):
     """
-    Predict the survival rate of shrimp based on water quality variables.
+    Predict the survival rate of shrimp based on TDS and pH.
 
-    :param do: Dissolved Oxygen (float)
+    :param tds: Total Dissolved Solids (float)
     :param ph: pH level (float)
-    :param temperature: Water Temperature (float)
-    :param turbidity: Turbidity (float)
     :return: Tuple of (survival_rate, anomaly_detected)
     """
     
     # Prepare the input data for prediction
-    input_data = np.array([[do, ph, temperature, turbidity]])
+    input_data = np.array([[tds, ph]])
     
     # Predict the survival rate using the RandomForest model
     survival_rate = model.predict(input_data)[0]
     
-    # Example anomaly detection (customize this logic as needed)
+    # Example anomaly detection
     anomaly_detected = False
-    if do < 5.0 or ph < 6.0 or temperature < 20.0 or turbidity > 20.0:
+    if tds < 300 or tds > 600 or ph < 7.8 or ph > 8.5:
         anomaly_detected = True
     
-    print(model)
     return survival_rate, anomaly_detected
 
 def get_water_quality_data():
@@ -46,16 +39,15 @@ def get_water_quality_data():
     
     return data
 
-def generate_recommendations(do, ph, temperature, turbidity, anomaly_detected):
+def generate_recommendations(tds, ph, anomaly_detected):
     recommendations = []
     if anomaly_detected:
-        if do < 4.0:
-            recommendations.append("Increase Dissolved Oxygen by adding aeration.")
-        if ph < 7.5 or ph > 8.5:
-            recommendations.append("Adjust the pH by adding alkaline substances.")
-        if turbidity > 20.0:
-            recommendations.append("Check the water source for possible contamination.")
-        # Add more conditions as needed
+        if tds < 300:
+            recommendations.append("Increase TDS by adding minerals.")
+        elif tds > 600:
+            recommendations.append("Reduce TDS by partial water replacement.")
+        if ph < 7.8 or ph > 8.5:
+            recommendations.append("Adjust the pH by using pH buffer solutions.")
     else:
         recommendations = ["Water quality is within optimal parameters. No immediate action required."]
     

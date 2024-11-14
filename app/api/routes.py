@@ -1,10 +1,9 @@
 from flask import Blueprint, request, jsonify
-from app.core.use_cases import predict_survival_rate
-from app.core.use_cases import get_water_quality_data
-from app.core.use_cases import generate_recommendations
+from app.core.use_cases import predict_survival_rate, get_water_quality_data, generate_recommendations
 
 # Create a blueprint for the API routes
-api_bp = Blueprint('/', __name__)
+api_bp = Blueprint('api', __name__)
+
 
 @api_bp.route('/', methods=['GET'])
 def index():
@@ -17,23 +16,25 @@ def predict():
     data = request.json
     
     # Extract the required variables
-    do = data.get('do')
+    tds = data.get('tds')
     ph = data.get('ph')
-    temperature = data.get('temperature')
-    turbidity = data.get('turbidity')
     
     # Validate input
-    if do is None or ph is None or temperature is None or turbidity is None:
+    if tds is None or ph is None:
         return jsonify({'error': 'Missing one or more required parameters'}), 400
 
+    if not isinstance(tds, (int, float)) or not isinstance(ph, (int, float)):
+        return jsonify({'error': 'Invalid input data type for tds or ph'}), 400
+
     # Call the use case to predict the survival rate
-    survival_rate, anomaly_detected = predict_survival_rate(do, ph, temperature, turbidity)
+    survival_rate, anomaly_detected = predict_survival_rate(tds, ph)
     
     # Return the result as a JSON response
     return jsonify({
-        'survival_rate': survival_rate,
+        'survival_rate': int(survival_rate),  # Convert to int for proper serialization
         'anomaly_detected': anomaly_detected
     })
+
 
 # Define a route for the water quality endpoint
 @api_bp.route('/water-quality', methods=['GET'])
@@ -47,16 +48,18 @@ def water_quality():
 @api_bp.route('/recommendation', methods=['POST'])
 def get_recommendation():
     data = request.json
-    do = data['do']
+    tds = data['tds']
     ph = data['ph']
-    temperature = data['temperature']
-    turbidity = data['turbidity']
     
-    # Call the model to predict survival rate (assuming the function exists)
-    survival_rate, anomaly_detected = predict_survival_rate(do, ph, temperature, turbidity)
+    # Call the model to predict survival rate
+    survival_rate, anomaly_detected = predict_survival_rate(tds, ph)
+
+    # Mengonversi ke tipe data standar Python (int, float) jika perlu
+    survival_rate = float(survival_rate)  # Pastikan survival_rate adalah float
+    anomaly_detected = bool(anomaly_detected)  # Pastikan anomaly_detected adalah boolean
     
     # Generate recommendations
-    recommendations = generate_recommendations(do, ph, temperature, turbidity, anomaly_detected)
+    recommendations = generate_recommendations(tds, ph, anomaly_detected)
     
     return jsonify({
         "survival_rate": survival_rate,
