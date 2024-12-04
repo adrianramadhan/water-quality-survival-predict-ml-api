@@ -50,14 +50,26 @@ def water_quality():
 @api_bp.route('/recommendation', methods=['POST'])
 def get_recommendation():
     data = request.json
-    tds = data['TDS']
-    ph = data['pH']
     
+    # Extract the required variables
+    do = data.get('DO')
+    salinitas = data.get('Salinitas')
+    ph = data.get('pH')
+    tds = data.get('TDS')
+    suhu = data.get('Suhu')
+    
+    # Validate input
+    if None in [do, salinitas, ph, tds, suhu]:
+        return jsonify({'error': 'Missing one or more required parameters'}), 400
+
+    if not all(isinstance(x, (int, float)) for x in [do, salinitas, ph, tds, suhu]):
+        return jsonify({'error': 'Invalid input data type for one or more parameters'}), 400
+
     # Call the model to predict survival rate
-    survival_rate, anomaly_detected = predict_survival_rate(data['DO'], data['Salinitas'], ph, tds, data['Suhu'])
+    survival_rate, anomaly_detected = predict_survival_rate(do, salinitas, ph, tds, suhu)
 
     # Generate recommendations
-    recommendations = generate_recommendations(tds, ph, anomaly_detected)
+    recommendations = generate_recommendations(do, salinitas, ph, tds, suhu, anomaly_detected)
     
     return jsonify({
         "survival_rate": float(survival_rate),
