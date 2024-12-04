@@ -2,21 +2,16 @@ import pickle
 import numpy as np
 from app.repositories.water_quality_repo import fetch_all_water_quality_data
 
-# Load the trained model (assuming the model is saved in a file named 'survival_model.pkl')
+# Load the trained model
 with open('app/data/survival_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
-def predict_survival_rate(tds, ph):
+def predict_survival_rate(do, salinitas, ph, tds, suhu):
     """
-    Predict the survival rate of shrimp based on TDS and pH.
-
-    :param tds: Total Dissolved Solids (float)
-    :param ph: pH level (float)
-    :return: Tuple of (survival_rate, anomaly_detected)
+    Predict the survival rate of shrimp based on water quality parameters.
     """
-    
     # Prepare the input data for prediction
-    input_data = np.array([[tds, ph]])
+    input_data = np.array([[do, salinitas, ph, tds, suhu]])
     
     # Predict the survival rate using the RandomForest model
     survival_rate = model.predict(input_data)[0]
@@ -31,12 +26,8 @@ def predict_survival_rate(tds, ph):
 def get_water_quality_data():
     """
     Retrieve water quality data from the database.
-
-    :return: List of dictionaries containing water quality data
     """
-    # Call the repository function to fetch the data
     data = fetch_all_water_quality_data()
-    
     return data
 
 def generate_recommendations(tds, ph, anomaly_detected):

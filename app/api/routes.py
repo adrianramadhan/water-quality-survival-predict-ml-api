@@ -4,7 +4,6 @@ from app.core.use_cases import predict_survival_rate, get_water_quality_data, ge
 # Create a blueprint for the API routes
 api_bp = Blueprint('api', __name__)
 
-
 @api_bp.route('/', methods=['GET'])
 def index():
     return jsonify({'message': 'Welcome to the Shrimp Survival API!'})
@@ -16,25 +15,27 @@ def predict():
     data = request.json
     
     # Extract the required variables
-    tds = data.get('tds')
-    ph = data.get('ph')
+    do = data.get('DO')
+    salinitas = data.get('Salinitas')
+    ph = data.get('pH')
+    tds = data.get('TDS')
+    suhu = data.get('Suhu')
     
     # Validate input
-    if tds is None or ph is None:
+    if None in [do, salinitas, ph, tds, suhu]:
         return jsonify({'error': 'Missing one or more required parameters'}), 400
 
-    if not isinstance(tds, (int, float)) or not isinstance(ph, (int, float)):
-        return jsonify({'error': 'Invalid input data type for tds or ph'}), 400
+    if not all(isinstance(x, (int, float)) for x in [do, salinitas, ph, tds, suhu]):
+        return jsonify({'error': 'Invalid input data type for one or more parameters'}), 400
 
     # Call the use case to predict the survival rate
-    survival_rate, anomaly_detected = predict_survival_rate(tds, ph)
+    survival_rate, anomaly_detected = predict_survival_rate(do, salinitas, ph, tds, suhu)
     
     # Return the result as a JSON response
     return jsonify({
-        'survival_rate': int(survival_rate),  # Convert to int for proper serialization
+        'survival_rate': float(survival_rate),  # Convert to float for proper serialization
         'anomaly_detected': anomaly_detected
     })
-
 
 # Define a route for the water quality endpoint
 @api_bp.route('/water-quality', methods=['GET'])
@@ -45,24 +46,21 @@ def water_quality():
     # Return the data as a JSON response
     return jsonify(data)
 
+# Define a route for the recommendation endpoint
 @api_bp.route('/recommendation', methods=['POST'])
 def get_recommendation():
     data = request.json
-    tds = data['tds']
-    ph = data['ph']
+    tds = data['TDS']
+    ph = data['pH']
     
     # Call the model to predict survival rate
-    survival_rate, anomaly_detected = predict_survival_rate(tds, ph)
+    survival_rate, anomaly_detected = predict_survival_rate(data['DO'], data['Salinitas'], ph, tds, data['Suhu'])
 
-    # Mengonversi ke tipe data standar Python (int, float) jika perlu
-    survival_rate = float(survival_rate)  # Pastikan survival_rate adalah float
-    anomaly_detected = bool(anomaly_detected)  # Pastikan anomaly_detected adalah boolean
-    
     # Generate recommendations
     recommendations = generate_recommendations(tds, ph, anomaly_detected)
     
     return jsonify({
-        "survival_rate": survival_rate,
+        "survival_rate": float(survival_rate),
         "anomaly_detected": anomaly_detected,
         "recommendation": recommendations
     })
