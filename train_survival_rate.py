@@ -38,46 +38,26 @@ df['survival_rate'] = (
     df['Suhu_normalized'] * weights['Suhu']
 ) * 100  # Scale to percentage
 
-# Adjust survival rate based on distance from optimal conditions
+# Adjust survival rate based on optimal conditions
 def adjust_survival_rate(row):
-    # Calculate distance from optimal conditions
-    distance = 0.0
+    adjustment_factor = 1.0  # Start with no adjustment
+    # Check each parameter against its optimal range
+    if not (optimal_conditions['DO'][0] < row['DO']):  # DO must be > 5
+        adjustment_factor *= 0.5  # Reduce by 50% if DO is not met
+    if not (optimal_conditions['Salinitas'][0] <= row['Salinitas'] <= optimal_conditions['Salinitas'][1]):
+        adjustment_factor *= 0.5  # Reduce by 50% if Salinitas is not met
+    if not (optimal_conditions['pH'][0] <= row['pH'] <= optimal_conditions['pH'][1]):
+        adjustment_factor *= 0.5  # Reduce by 50% if pH is not met
+    if not (optimal_conditions['TDS'][0] <= row['TDS'] <= optimal_conditions['TDS'][1]):
+        adjustment_factor *= 0.5  # Reduce by 50% if TDS is not met
+    if not (optimal_conditions['Suhu'][0] <= row['Suhu'] <= optimal_conditions['Suhu'][1]):
+        adjustment_factor *= 0.5  # Reduce by 50% if Suhu is not met
     
-    # Check DO
-    if row['DO'] <= optimal_conditions['DO'][0]:
-        distance += (optimal_conditions['DO'][0] - row['DO']) * weights['DO']
-    
-    # Check Salinitas
-    if row['Salinitas'] < optimal_conditions['Salinitas'][0]:
-        distance += (optimal_conditions['Salinitas'][0] - row['Salinitas']) * weights['Salinitas']
-    elif row['Salinitas'] > optimal_conditions['Salinitas'][1]:
-        distance += (row['Salinitas'] - optimal_conditions['Salinitas'][1]) * weights['Salinitas']
-    
-    # Check pH
-    if row['pH'] < optimal_conditions['pH'][0]:
-        distance += (optimal_conditions['pH'][0] - row['pH']) * weights['pH']
-    elif row['pH'] > optimal_conditions['pH'][1]:
-        distance += (row['pH'] - optimal_conditions['pH'][1]) * weights['pH']
-    
-    # Check TDS
-    if row['TDS'] < optimal_conditions['TDS'][0]:
-        distance += (optimal_conditions['TDS'][0] - row['TDS']) * weights['TDS']
-    elif row['TDS'] > optimal_conditions['TDS'][1]:
-        distance += (row['TDS'] - optimal_conditions['TDS'][1]) * weights['TDS']
-    
-    # Check Suhu
-    if row['Suhu'] < optimal_conditions['Suhu'][0]:
-        distance += (optimal_conditions['Suhu'][0] - row['Suhu']) * weights['Suhu']
-    elif row['Suhu'] > optimal_conditions['Suhu'][1]:
-        distance += (row['Suhu'] - optimal_conditions['Suhu'][1]) * weights['Suhu']
-    
-    # Calculate adjusted survival rate
-    adjusted_rate = row['survival_rate'] - distance
-    return max(adjusted_rate, 0)  # Ensure survival rate does not go below 0
+    return row['survival_rate'] * adjustment_factor
 
 # Apply the adjustment function to the DataFrame
 df['adjusted_survival_rate'] = df.apply(adjust_survival_rate, axis=1)
 
 # Save the updated DataFrame to a new Excel file
 df.to_excel('app/data/dataset_with_survival_rate.xlsx', index=False)
-print("Data with adjusted survival rate has been saved to 'app/data/dataset_with_survival_rate.xlsx'")
+print("Data with adjusted survival rate has been saved to 'app/data/dataset_with_adjusted_survival_rate.xlsx'")
