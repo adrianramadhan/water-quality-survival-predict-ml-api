@@ -79,5 +79,5 @@ def adjust_survival_rate(row):
 df['adjusted_survival_rate'] = df.apply(adjust_survival_rate, axis=1)
 
 # Save the updated DataFrame to a new Excel file
-df.to_excel('app/data/dataset_with_adjusted_survival_rate.xlsx', index=False)
-print("Data with adjusted survival rate has been saved to 'app/data/dataset_with_adjusted_survival_rate.xlsx'")
+df.to_excel('app/data/dataset_with_survival_rate.xlsx', index=False)
+print("Data with adjusted survival rate has been saved to 'app/data/dataset_with_survival_rate.xlsx'")
