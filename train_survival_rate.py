@@ -1,33 +1,34 @@
 import pandas as pd
+import numpy as np
 
-# Load the data
-data = pd.read_excel('app/data/dataset_randomized.xlsx')
+# Load the generated dataset
+df = pd.read_excel('app/data/dataset_generated.xlsx')
 
-# Define a function to calculate survival rate based on TDS and pH
-def calculate_survival_rate(row):
-    # Check if data falls outside the normal range (anomalies)
-    if row['TDS'] < 300 or row['TDS'] > 600 or not (7.8 <= row['pH'] <= 8.5):
-        return 20  # Low survival rate for anomalous conditions
-    elif 500 <= row['TDS'] <= 600 and 7.8 <= row['pH'] <= 8.5:
-        return 80  # High survival rate for ideal conditions
-    elif 300 <= row['TDS'] < 500 and 7.8 <= row['pH'] <= 8.5:
-        return 50  # Medium survival rate for acceptable conditions
-    else:
-        return 20  # Default to low survival rate for any other cases
+# Define weights for each parameter
+weights = {
+    'DO': 0.40,      # Oksigen Terlarut
+    'Salinitas': 0.30,  # Salinitas
+    'pH': 0.15,      # pH
+    'TDS': 0.10,     # Total Dissolved Solids
+    'Suhu': 0.05     # Suhu
+}
 
-# Apply the function to each row in the dataset
-data['Survival Rate'] = data.apply(calculate_survival_rate, axis=1)
+# Normalize the parameters to a scale of 0 to 1
+df['DO_normalized'] = (df['DO'] - df['DO'].min()) / (df['DO'].max() - df['DO'].min())
+df['Salinitas_normalized'] = (df['Salinitas'] - df['Salinitas'].min()) / (df['Salinitas'].max() - df['Salinitas'].min())
+df['pH_normalized'] = (df['pH'] - df['pH'].min()) / (df['pH'].max() - df['pH'].min())
+df['TDS_normalized'] = (df['TDS'] - df['TDS'].min()) / (df['TDS'].max() - df['TDS'].min())
+df['Suhu_normalized'] = (df['Suhu'] - df['Suhu'].min()) / (df['Suhu'].max() - df['Suhu'].min())
 
-# Save the modified dataset to a new file
-data.to_excel('app/data/dataset_filled.xlsx', index=False)
-print("Data with Survival Rate has been saved to 'app/data/dataset_filled.xlsx'")
+# Calculate the survival rate based on the weighted sum of normalized parameters
+df['survival_rate'] = (
+    df['DO_normalized'] * weights['DO'] +
+    df['Salinitas_normalized'] * weights['Salinitas'] +
+    df['pH_normalized'] * weights['pH'] +
+    df['TDS_normalized'] * weights['TDS'] +
+    df['Suhu_normalized'] * weights['Suhu']
+) * 100  # Scale to percentage
 
-# Anomali: Survival Rate 20 jika:
-# TDS < 300 atau TDS > 600, atau
-# pH di luar rentang 7.8 hingga 8.5
-
-# Kondisi Ideal: Survival Rate 80 jika:
-# 500 <= TDS <= 600 dan 7.8 <= pH <= 8.5
-
-# Kondisi Diterima: Survival Rate 50 jika:
-# 300 <= TDS < 500 dan 7.8 <= pH <= 8.5
+# Save the updated DataFrame to a new Excel file
+df.to_excel('app/data/dataset_with_survival_rate.xlsx', index=False)
+print("Data with survival rate has been saved to 'app/data/dataset_with_survival_rate.xlsx'")
