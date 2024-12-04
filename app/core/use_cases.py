@@ -30,8 +30,8 @@ def predict_survival_rate(do, salinitas, ph, tds, suhu):
         anomaly_detected = True
     
     # Adjust survival rate if anomalies are detected
-    if anomaly_detected:
-        survival_rate *= 0.5  # Reduce survival rate by 50% if any anomaly is detected
+    # if anomaly_detected:
+    #     survival_rate *= 0.5  # Reduce survival rate by 50% if any anomaly is detected
     
     return survival_rate, anomaly_detected
 
