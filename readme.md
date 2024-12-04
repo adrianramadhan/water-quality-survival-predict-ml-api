@@ -5,9 +5,10 @@
 The `water-quality-and-survival-rate-predict-ml-api` project is designed to predict the survival rate of shrimp in a pond based on four key water quality variables:
 
 - **DO (Dissolved Oxygen)**
+- **Salinity**
 - **pH**
 - **Water Temperature**
-- **Turbidity**
+- **Total Dissolved Solids (TDS)**
 
 The project uses a Random Forest algorithm to detect anomalies in water quality and predict the shrimp survival rate (the `y` variable). This API is built with Python, Flask, and Scikit-learn, and is intended to be consumed by a front-end application, specifically for shrimp pond management.
 
@@ -33,7 +34,7 @@ Before running the application, you'll need to train the Random Forest model on 
 
 1. **Prepare the Dataset**:
 
-   - Ensure your dataset contains the following columns: `DO`, `pH`, `Water Temperature`, `Turbidity`, and `Survival Rate`.
+   - Ensure your dataset contains the following columns: `DO`, `pH`, `Water Temperature`, `TDS`, `Salinity`, and `Survival Rate`.
 
 2. **Train the Model**:
    - Run the script to train the model:
@@ -72,40 +73,47 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 - Request Body
 
 ```
-    {
-       "pH": 7.2,
-       "Turbidity": 3.5,
-       "do": 6.5,
-       "temperature": 28.5,
-    }
+{
+    "DO": 5.0,
+    "Salinitas": 20.0,
+    "pH": 7.2,
+    "TDS": 250,
+    "Suhu": 30.0
+}
+
 ```
 
 - Response
 
 ```
 {
-    "survival_rate": 90,
-    "anomaly_detected": false
+    "anomaly_detected": true,
+    "survival_rate": 30.099853793449764
 }
 ```
 
-**Get Water Quality Data:**:
+- Request Body
 
-- Endpoint: api/data
-- Method: GET
+```
+{
+    "DO": 7.0,
+    "Salinitas": 15.0,
+    "pH": 9.0,
+    "TDS": 500,
+    "Suhu": 26.0
+}
+
+```
+
 - Response
 
 ```
-[
-    {
-        "do": 6.5,
-        "ph": 7.2,
-        "temperature": 28.5,
-        "turbidity": 10.0,
-        "survival_rate": 85.0
-    },
-]
+{
+    "anomaly_detected": true,
+    "survival_rate": 34.370288893660906
+}
 ```
+
 
 **Anomaly Recommendation:**:
 
@@ -113,12 +121,36 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 - Method: POST
 - Request Body
 ```
-   {
-    "do": 3.5,
-    "ph": 6.2,
-    "temperature": 26.5,
-    "turbidity": 22.0
-   }
+{
+    "DO": 7.0,
+    "Salinitas": 25.0,
+    "pH": 7.8,
+    "TDS": 350,
+    "Suhu": 27.0
+}
+```
+
+- Response
+
+```
+{
+    "anomaly_detected": false,
+    "recommendation": [
+        "Water quality is within optimal parameters. No immediate action required."
+    ],
+    "survival_rate": 74.54531311614866
+}
+```
+
+- Request Body
+```
+{
+    "DO": 6.0,
+    "Salinitas": 40.0,
+    "pH": 7.5,
+    "TDS": 600,
+    "Suhu": 29.0
+}
 ```
 
 - Response
@@ -127,10 +159,32 @@ The water-quality-ml-api exposes several endpoints to interact with the trained 
 {
     "anomaly_detected": true,
     "recommendation": [
-        "Increase Dissolved Oxygen by adding aeration.",
-        "Adjust the pH by adding alkaline substances.",
-        "Check the water source for possible contamination."
+        "Adjust salinity to be between 15 and 25 ppt.",
+        "Adjust the pH by using pH buffer solutions."
     ],
-    "survival_rate": 75.0
+    "survival_rate": 39.5908783319008
+}
+```
+
+- Request Body
+```
+{
+    "DO": 6.0,
+    "Salinitas": 22.0,
+    "pH": 7.8,
+    "TDS": 300,
+    "Suhu": 55.0
+}
+```
+
+- Response
+
+```
+{
+    "anomaly_detected": true,
+    "recommendation": [
+        "Adjust temperature to be between 27 and 30°C."
+    ],
+    "survival_rate": 33.992111805857526
 }
 ```
